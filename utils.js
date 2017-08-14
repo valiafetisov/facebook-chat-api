@@ -683,15 +683,15 @@ function getFrom(str, startToken, endToken) {
 
 function makeParsable(html) {
   var withoutForLoop = html.replace(/for\s*\(\s*;\s*;\s*\)\s*;\s*/, "");
-  
+
   // (What the fuck FB, why windows style newlines?)
   // So sometimes FB will send us base multiple objects in the same response.
   // They're all valid JSON, one after the other, at the top level. We detect
   // that and make it parse-able by JSON.parse.
   //       Ben - July 15th 2017
-  var maybeMultipleObjects = withoutForLoop.split("}\r\n{");
+  var maybeMultipleObjects = withoutForLoop.split("}\r{");
   if (maybeMultipleObjects.length === 1) return maybeMultipleObjects;
-  
+
   return "[" + maybeMultipleObjects.join("},{") + "]";
 }
 
@@ -718,14 +718,14 @@ function generateTimestampRelative() {
 function makeDefaults(html, userID, ctx) {
   var reqCounter = 1;
   var fb_dtsg = getFrom(html, "name=\"fb_dtsg\" value=\"", "\"");
-  
+
   // @Hack Ok we've done hacky things, this is definitely on top 5.
   // We totally assume the object is flat and try parsing until a }.
   // If it works though it's cool because we get a bunch of extra data things.
-  // 
+  //
   // Update: we don't need this. Leaving it in in case we ever do.
   //       Ben - July 15th 2017
-  
+
   // var siteData = getFrom(html, "[\"SiteData\",[],", "},");
   // try {
   //   siteData = JSON.parse(siteData + "}");
@@ -733,7 +733,7 @@ function makeDefaults(html, userID, ctx) {
   //   log.warn("makeDefaults", "Couldn't parse SiteData. Won't have access to some variables.");
   //   siteData = {};
   // }
-  
+
   var ttstamp = "2";
   for (var i = 0; i < fb_dtsg.length; i++) {
     ttstamp += fb_dtsg.charCodeAt(i);
@@ -745,11 +745,11 @@ function makeDefaults(html, userID, ctx) {
     // After some investigation it seems like __dyn is some sort of set that FB
     // calls BitMap. It seems like certain responses have a "define" key in the
     // res.jsmods arrays. I think the code iterates over those and calls `set`
-    // on the bitmap for each of those keys. Then it calls 
+    // on the bitmap for each of those keys. Then it calls
     // bitmap.toCompressedString() which returns what __dyn is.
-    // 
+    //
     // So far the API has been working without this.
-    // 
+    //
     //              Ben - July 15th 2017
     var newObj = {
       __user: userID,
@@ -763,7 +763,7 @@ function makeDefaults(html, userID, ctx) {
       // __spin_b: siteData.__spin_b,
       // __spin_t: siteData.__spin_t,
     };
-    
+
     // @TODO this is probably not needed.
     //         Ben - July 15th 2017
     // if (siteData.be_key) {
@@ -782,7 +782,7 @@ function makeDefaults(html, userID, ctx) {
         }
       }
     }
-    
+
     return newObj;
   }
 
@@ -852,7 +852,7 @@ function parseAndCheckLogin(ctx, defaultFuncs, retryCount) {
           res: data.body
         };
       }
-      
+
       // TODO: handle multiple cookies?
       if (res.jsmods
           && res.jsmods.require
@@ -864,7 +864,7 @@ function parseAndCheckLogin(ctx, defaultFuncs, retryCount) {
         ctx.jar.setCookie(cookie, "https://www.facebook.com");
         ctx.jar.setCookie(cookie2, "https://www.messenger.com");
       }
-      
+
       // On every request we check if we got a DTSG and we mutate the context so that we use the latest
       // one for the next requests.
       if (res.jsmods
@@ -881,7 +881,7 @@ function parseAndCheckLogin(ctx, defaultFuncs, retryCount) {
             }
           }
         }
-        
+
       }
 
       if (res.error === 1357001) {
@@ -973,7 +973,8 @@ function formatProxyPresence(presence, userID) {
     type: "presence",
     timestamp: presence.lat * 1000,
     userID: userID,
-    statuses: presence.p === undefined ? 0 : presence.p
+    statuses: presence.p === undefined ? 0 : presence.p,
+    statusType: presence.vc
   };
 }
 
@@ -982,7 +983,8 @@ function formatPresence(presence, userID) {
     type: "presence",
     timestamp: presence.la * 1000,
     userID: userID,
-    statuses: presence.a
+    statuses: presence.a,
+    statusType: presence.vc
   };
 }
 

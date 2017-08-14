@@ -31,6 +31,7 @@ module.exports = function(defaultFuncs, api, ctx) {
     'uid' : ctx.userID,
     'state' : 'active',
     'idle' : 0,
+    'pws' : 'fresh',
     'cap' : '8',
     'msgs_recv':msgsRecv
   };
