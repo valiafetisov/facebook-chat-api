@@ -398,30 +398,6 @@ function _formatAttachment(attachment1, attachment2) {
         animatedWebpUrl: blob.animated_image.uri,
         animatedWebpPreviewUrl: blob.preview_image.uri,
       };
-    case "MessageVideo":
-      return {
-        type: "video",
-        filename: blob.filename,
-        thumbnailUrl: blob.large_image.uri,
-        previewUrl: blob.large_image.uri,
-        previewWidth: blob.large_image.width,
-        previewHeight: blob.large_image.height,
-        ID: blob.legacy_attachment_id,
-        url: blob.playable_url,
-        width: blob.original_dimensions.x,
-        height: blob.original_dimensions.y,
-        duration: blob.playable_duration_in_ms,
-      };
-    case "MessageAudio":
-      return {
-        type: "audio",
-        audioType: blob.audio_type,
-        isVoiceMail: blob.is_voicemail,
-        filename: blob.filename,
-        ID: blob.url_shimhash,
-        url: blob.playable_url,
-        duration: blob.playable_duration_in_ms,
-      };
     case "StickerAttachment":
         return {
           type: "sticker",
@@ -453,7 +429,7 @@ function _formatAttachment(attachment1, attachment2) {
         source: blob.story_attachment.source.text,
         title: blob.story_attachment.title_with_entities.text,
         facebookUrl: blob.story_attachment.url,
-        target: blob.story_attachment.target,
+        target: blob.story_attachment.target.__typename,
         styleList: blob.story_attachment.style_list,
         url: blob.story_attachment.url
       };
@@ -492,7 +468,7 @@ function formatDeltaMessage(m){
   for (var i = 0; i < m_id.length; i++) {
     mentions[m_id[i]] = m.delta.body.substring(m_offset[i], m_offset[i] + m_length[i]);
   }
-  
+
   return {
     type: "message",
     senderID: formatID(md.actorFbId.toString()),
