@@ -443,7 +443,10 @@ function _formatAttachment(attachment1, attachment2) {
         mimeType: blob.content_type,
       };
     default:
-      throw new Error("unrecognized attach_file of type " + type +  "`" + JSON.stringify(attachment1, null, 4) + " attachment2: " + JSON.stringify(attachment2, null, 4) + "`");
+      // do not throw error because it's uncatchable by the application
+      // throw new Error("unrecognized attach_file of type " + type +  "`" + JSON.stringify(attachment1, null, 4) + " attachment2: " + JSON.stringify(attachment2, null, 4) + "`");
+      console.warn("warning: unrecognized attach_file of type " + type +  "`" + JSON.stringify(attachment1, null, 4) + " attachment2: " + JSON.stringify(attachment2, null, 4) + "`")
+      return
   }
 }
 
