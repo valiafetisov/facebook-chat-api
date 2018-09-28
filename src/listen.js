@@ -102,7 +102,7 @@ module.exports = function(defaultFuncs, api, ctx) {
         form.sticky_pool = resData.lb_info.pool;
       }
 
-      if(resData && resData.t === 'fullReload') {
+      if(resData && resData.type === 'fullReload') {
         form.seq = resData.seq;
         delete form.sticky_pool;
         delete form.sticky_token;
